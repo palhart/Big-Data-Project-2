@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  hdfs-namenode:
+    container_name: "hdfs-namenode"
+    image: "apache/hadoop:3"
+    hostname: "hdfs-namenode"
+    command: ["hdfs", "namenode"]
+    ports:
+      - "9870:9870"  # Web UI
+      - "8020:8020"  # RPC port
+    env_file:
+      - ./config
+    environment:
+      ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+    networks:
+      - hadoop
+
+  hdfs-datanode:
+    depends_on:
+      hdfs-namenode:
+        condition: service_started
+    container_name: "hdfs-datanode"
+    image: "apache/hadoop:3"
+    hostname: "hdfs-datanode"
+    command: ["hdfs", "datanode"]
+    env_file:
+      - ./config
+    networks:
+      - hadoop
+
+networks:
+  hadoop:
+    driver: bridge
