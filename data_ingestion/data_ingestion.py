@@ -2,7 +2,7 @@ from hdfs import InsecureClient
 import pandas as pd
 
 # Connect to the NameNode's WebHDFS interface
-hdfs_client = InsecureClient('http://localhost:9870', user='paul')
+hdfs_client = InsecureClient('http://localhost:9870', user='root')
 
 
 def upload_file_to_hdfs(local_file_path, hdfs_file_path):
@@ -13,4 +13,4 @@ def upload_file_to_hdfs(local_file_path, hdfs_file_path):
         print(f"Failed to upload {local_file_path} to {hdfs_file_path}: {e}")
 
 
-
+upload_file_to_hdfs("/data/BigData/ecommerce_data_with_trends.csv", "/data/ecommerce_data_with_trends.csv")
