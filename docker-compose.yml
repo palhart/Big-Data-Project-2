@@ -1,0 +1,27 @@
+services:
+  # distributed storage
+  hdfs-namenode:
+    container_name: "hdfs-namenode"
+    image: "apache/hadoop:3"
+    hostname: "hdfs-namenode"
+    command: ["hdfs", "namenode"]
+    ports:
+      - "8020:8020"
+      - "9870:9870"  # Web UI port
+    env_file:
+      - ./hadoop-config/config
+    environment:
+      ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+
+  hdfs-datanode:
+    depends_on:
+      hdfs-namenode:
+        condition: service_started
+    container_name: "hdfs-datanode"
+    image: "apache/hadoop:3"
+    hostname: "localhost"
+    command: ["hdfs", "datanode"]
+    ports:
+      - "9864:9864"
+    env_file:
+      - ./hadoop-config/config
