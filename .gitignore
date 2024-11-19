@@ -1,5 +1,4 @@
-data/
-
-uv.lock
-
+# Environments
 .venv/
+__pycache__/
+uv.lock
