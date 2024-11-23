@@ -20,7 +20,18 @@ data = load_data(spark=spark)
 # Register the DataFrame as a temporary view
 data.createOrReplaceTempView("transactions")
 
+
 result = get_top_ten_customer(spark=spark)
+
+# Show the result
+result.show()
+
+result = get_top_five_products(spark=spark)
+
+# Show the result
+result.show()
+
+result = get_top_five_cities(spark=spark)
 
 # Show the result
 result.show()
