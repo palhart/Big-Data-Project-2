@@ -10,4 +10,5 @@ dependencies = [
     "scipy>=1.14.1",
     "scikit-learn>=1.5.2",
     "hdfs>=2.7",
+    "pyspark>=3.5.3",
 ]
