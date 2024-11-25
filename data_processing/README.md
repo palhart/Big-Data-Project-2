@@ -1,7 +1,7 @@
 # Big-Data-Project-2
 
 ## Overview
-This project demonstrates a comprehensive data cleaning and processing pipeline for an e-commerce dataset using PySpark. The pipeline includes the following key steps:
+This project demonstrates a comprehensive data cleaning and processing pipeline for a dataset using PySpark. The pipeline includes the following key steps:
 
 1. **Data Processing and Cleaning**:
    - Handling missing values
