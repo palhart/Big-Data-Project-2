@@ -20,18 +20,9 @@ data = load_data(spark=spark)
 # Register the DataFrame as a temporary view
 data.createOrReplaceTempView("transactions")
 
+# Exemple of how to get the analysis with SQL
+top_ten_customer_df = get_top_ten_customer(spark=spark)
 
-result = get_top_ten_customer(spark=spark)
+top_five_products_df = get_top_five_products(spark=spark)
 
-# Show the result
-result.show()
-
-result = get_top_five_products(spark=spark)
-
-# Show the result
-result.show()
-
-result = get_top_five_cities(spark=spark)
-
-# Show the result
-result.show()
+top_five_cities_df = get_top_five_cities(spark=spark)
