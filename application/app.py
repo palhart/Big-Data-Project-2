@@ -128,11 +128,10 @@ app.layout = html.Div([
         # Third Tab: SQL Queries
         dcc.Tab(label='SQL Queries', children=[
             html.Div([
-                html.H3('Top 10 Customers by Total Spent', style={'color': '#2c3e50'}),
+                html.H3('Top 100 Customers by Total Spent', style={'color': '#2c3e50'}),
                 dash.dash_table.DataTable(
                     id='sql-queries-table',
                     columns=[
-                        {"name": "Customer ID", "id": "customer_id"},
                         {"name": "Customer Name", "id": "customer_name"},
                         {"name": "Total Spent", "id": "total_spent"}
                     ],
