@@ -1,11 +1,15 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objs as go
 
-from analytics import prepare_data, calculate_key_metrics
-from load_data import load_data
+from Analytics.analytics import prepare_data, calculate_key_metrics
+from Analytics.load_data import load_data
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
