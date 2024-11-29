@@ -11,7 +11,7 @@ import plotly.graph_objs as go
 
 from Analytics.analytics import prepare_data, calculate_key_metrics
 from Analytics.load_data import load_data
-from sql_analytics.sql_queries import get_top_ten_customer
+from sql_analytics.sql_queries import *
 from sql_analytics.load_data import load_data_sql
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
@@ -22,7 +22,18 @@ df = prepare_data(df)
 
 data2, spark = load_data_sql()
 top_ten_customer = get_top_ten_customer(spark=spark)
+top_five_products_df = get_top_five_products(spark=spark)
+top_five_cities_df = get_top_five_cities(spark=spark)
+most_purchased_products = get_most_purchased_products(spark=spark)
+revenue_by_month = get_revenue_by_month(spark=spark)
+less_purchased_products = get_less_purchased_products(spark=spark)
+
 top_ten_customer_df = top_ten_customer.toPandas()
+top_five_products_df = top_five_products_df.toPandas()
+top_five_cities_df = top_five_cities_df.toPandas()
+most_purchased_products = most_purchased_products.toPandas()
+revenue_by_month = revenue_by_month.toPandas()
+less_purchased_products = less_purchased_products.toPandas()
 
 # Calculate key metrics
 total_revenue, total_customers, total_transactions, avg_order_value = calculate_key_metrics(df)
@@ -125,9 +136,10 @@ app.layout = html.Div([
             ]),
 
                    ]),
-        # Third Tab: SQL Queries
+
         dcc.Tab(label='SQL Queries', children=[
             html.Div([
+                # Top 10 Customers Table
                 html.H3('Top 100 Customers by Total Spent', style={'color': '#2c3e50'}),
                 dash.dash_table.DataTable(
                     id='sql-queries-table',
@@ -152,6 +164,112 @@ app.layout = html.Div([
                     page_size=10
                 )
             ], style={'padding': '20px'}),
+
+            # Most Purchased Products Table
+            html.Div([
+                html.H3('Most Purchased Products', style={'color': '#2c3e50'}),
+                dash.dash_table.DataTable(
+                    id='most-purchased-products-table',
+                    columns=[
+                        {"name": "Product Name", "id": "product_name"},
+                        {"name": "Total Quantity", "id": "total_quantity"}
+                    ],
+                    data=most_purchased_products.to_dict('records'),
+                    style_table={'overflowX': 'auto'},
+                    style_cell={
+                        'textAlign': 'left',
+                        'padding': '5px',
+                        'backgroundColor': '#f0f2f5',
+                        'border': '1px solid #ddd',
+                    },
+                    style_header={
+                        'fontWeight': 'bold',
+                        'backgroundColor': '#2ecc71',
+                        'color': 'white',
+                        'textAlign': 'center',
+                    },
+                    page_size=10
+                )
+            ], style={'padding': '20px'}),
+
+            # Less Purchased Products Table
+            html.Div([
+                html.H3('Less Purchased Products', style={'color': '#2c3e50'}),
+                dash.dash_table.DataTable(
+                    id='less-purchased-products-table',
+                    columns=[
+                        {"name": "Product Name", "id": "product_name"},
+                        {"name": "Total Quantity", "id": "total_quantity"}
+                    ],
+                    data=less_purchased_products.to_dict('records'),
+                    style_table={'overflowX': 'auto'},
+                    style_cell={
+                        'textAlign': 'left',
+                        'padding': '5px',
+                        'backgroundColor': '#f0f2f5',
+                        'border': '1px solid #ddd',
+                    },
+                    style_header={
+                        'fontWeight': 'bold',
+                        'backgroundColor': '#e74c3c',
+                        'color': 'white',
+                        'textAlign': 'center',
+                    },
+                    page_size=10
+                )
+            ], style={'padding': '20px'}),
+
+            # Top 5 Products by Revenue Table
+            html.Div([
+                html.H3('Top 5 Products by Revenue', style={'color': '#2c3e50'}),
+                dash.dash_table.DataTable(
+                    id='top-five-products-table',
+                    columns=[
+                        {"name": "Product Name", "id": "product_name"},
+                        {"name": "Total Revenue", "id": "total_revenue"}
+                    ],
+                    data=top_five_products_df.to_dict('records'),
+                    style_table={'overflowX': 'auto'},
+                    style_cell={
+                        'textAlign': 'left',
+                        'padding': '5px',
+                        'backgroundColor': '#f0f2f5',
+                        'border': '1px solid #ddd',
+                    },
+                    style_header={
+                        'fontWeight': 'bold',
+                        'backgroundColor': '#9b59b6',
+                        'color': 'white',
+                        'textAlign': 'center',
+                    },
+                    page_size=10
+                )
+            ], style={'padding': '20px'}),
+
+            # Monthly Revenue Candlestick Chart
+            html.Div([
+            html.H3('Monthly Revenue Trends', style={'color': '#2c3e50'}),
+            dcc.Graph(
+                id='revenue-by-month-chart',
+                figure={
+                    'data': [
+                        go.Bar(
+                            x=revenue_by_month['month'],
+                            y=revenue_by_month['total_revenue'],
+                            name='Revenue',
+                            marker_color='#3498db'
+                        )
+                    ],
+                    'layout': {
+                        'title': 'Monthly Revenue Trends',
+                        'xaxis': {'title': 'Month'},
+                        'yaxis': {'title': 'Revenue'},
+                        'plot_bgcolor': '#f9f9f9',
+                        'paper_bgcolor': '#f9f9f9',
+                    }
+                }
+            )
+        ], style={'padding': '20px'})
         ])
     ], style={
         'fontFamily': 'Arial, sans-serif',

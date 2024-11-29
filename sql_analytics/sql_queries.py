@@ -31,3 +31,30 @@ def get_top_five_cities(spark):
     LIMIT 5
     """
     return spark.sql(query) 
+
+def get_most_purchased_products(spark):
+    query = """
+    SELECT product_name, SUM(quantity) AS total_quantity 
+    FROM transactions 
+    GROUP BY product_name 
+    ORDER BY total_quantity DESC;
+    """
+    return spark.sql(query) 
+
+def get_revenue_by_month(spark):
+    query = """
+    SELECT DATE_FORMAT(timestamp, 'yyyy-MM') AS month, SUM(total_amount) AS total_revenue 
+    FROM transactions 
+    GROUP BY month 
+    ORDER BY month;
+    """
+    return spark.sql(query) 
+
+def get_less_purchased_products(spark):
+    query = """
+    SELECT product_name, SUM(quantity) AS total_quantity 
+    FROM transactions 
+    GROUP BY product_name 
+    ORDER BY total_quantity ASC;
+    """
+    return spark.sql(query) 
