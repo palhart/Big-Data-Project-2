@@ -1,8 +1,8 @@
-# E-commerce Data Analysis
+# E-commerce Data Visualizaation
 
 ## Description
 
-This repository contains the code for loading, preparing, and analyzing e-commerce data from the file `/data/BigData/ecommerce_data_with_trends.csv`. It also includes a Dash-based dashboard for visualizing the analysis results.
+This repository contains a Dash-based dashboard for visualizing the analysis results.
 
 ---
 
@@ -21,9 +21,15 @@ uv add dash pandas plotly pyspark
 
 ---
 ## Content
+- **`app.py`**  
+  Contains the Dash application to visualize the analysis results.
 
-- **`load_data.py`**  
-  Loads the CSV data using Apache Spark.
+---
 
-- **`analytics.py`**  
-  Provides functions to prepare data, calculate metrics, and analyze purchasing behaviors.
+## Quick Instructions
+
+1. Ensure the necessary data is ready.  
+2. Launch the dashboard by running:  
+   ```bash
+   python app.py
+   ```
