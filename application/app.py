@@ -137,7 +137,7 @@ app.layout = html.Div([
                         {"name": "Total Spent", "id": "total_spent"}
                     ],
                     data=top_ten_customer_df.to_dict('records'),
-                    style_table={'overflowX': 'auto'},
+                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},  # Scrollable table
                     style_cell={
                         'textAlign': 'left',
                         'padding': '5px',
@@ -149,9 +149,10 @@ app.layout = html.Div([
                         'backgroundColor': '#3498db',
                         'color': 'white',
                         'textAlign': 'center',
-                    }
+                    },
+                    page_size=10
                 )
-            ], style={'padding': '20px'})
+            ], style={'padding': '20px'}),
         ])
     ], style={
         'fontFamily': 'Arial, sans-serif',
