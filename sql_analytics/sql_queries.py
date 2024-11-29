@@ -70,3 +70,17 @@ def get_revenue_contribution(spark):
     ORDER BY revenue DESC;
     """
     return spark.sql(query) 
+
+
+def get_most_purchased_category_by_area(spark, area_name):
+    # Replace with the actual query to get the most purchased category based on area
+    query = f"""
+    SELECT category, SUM(total_amount) as total_spent
+    FROM transactions
+    WHERE city = '{area_name}'
+    GROUP BY category
+    ORDER BY total_spent DESC
+    LIMIT 1
+    """
+    
+    return spark.sql(query) 

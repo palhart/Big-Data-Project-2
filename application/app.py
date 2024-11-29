@@ -139,7 +139,7 @@ app.layout = html.Div([
             ]),
 
                    ]),
-
+            # third Tab: Advanced Analytics
         dcc.Tab(label='SQL Queries', children=[
             html.Div([
                 html.Div([
@@ -165,6 +165,28 @@ app.layout = html.Div([
                     }
                 )
             ], style={'padding': '20px'}),
+            # New section for the most purchased category by area
+            html.Div([
+                html.H3('Most Purchased Category by Area', style={'color': '#2c3e50'}),
+                
+                # Dropdown for area selection
+                html.Div([
+                    html.Label('Select Area', style={'fontWeight': 'bold'}),
+                    dcc.Dropdown(
+                        id='area-dropdown',
+                        options=[{'label': city, 'value': city} for city in df['city'].unique()],
+                        value=df['city'].unique()[0],  # Default value
+                        style={'width': '100%'}
+                    )
+                ], style={'padding': '10px', 'width': '45%', 'display': 'inline-block'}),
+                
+                # Display most purchased category for the selected area
+                html.Div([
+                    html.H4('Most Purchased Category:', id='category-output'),
+                    html.H5('Total Spent: $', id='total-spent-output'),
+                ], style={'padding': '20px'}),
+            ], style={'padding': '20px'}),
+
                 # Monthly Revenue Candlestick Chart
                 html.Div([
                 html.H3('Monthly Revenue Trends', style={'color': '#2c3e50'}),
@@ -358,6 +380,24 @@ def update_advanced_charts(customer_type, time_period):
     )
     
     return time_series_fig
+
+@app.callback(
+    [Output('category-output', 'children'),
+     Output('total-spent-output', 'children')],
+    [Input('area-dropdown', 'value')]
+)
+def update_most_purchased_category(area_name):
+    # Fetch the most purchased category for the selected area
+    result = get_most_purchased_category_by_area(spark=spark, area_name=area_name)
+    result_df = result.toPandas()  # Convert to Pandas DataFrame for easier handling
+    
+    if result_df.empty:
+        return "No data available", "-"
+    
+    category = result_df['category'].iloc[0]
+    total_spent = result_df['total_spent'].iloc[0]
+    
+    return category, f"${total_spent:,.2f}"
 
 # Add some global styling
 app.index_string = '''
