@@ -21,12 +21,14 @@ df = load_data()
 df = prepare_data(df)
 
 data2, spark = load_data_sql()
+
 top_ten_customer = get_top_ten_customer(spark=spark)
 top_five_products_df = get_top_five_products(spark=spark)
 top_five_cities_df = get_top_five_cities(spark=spark)
 most_purchased_products = get_most_purchased_products(spark=spark)
 revenue_by_month = get_revenue_by_month(spark=spark)
 less_purchased_products = get_less_purchased_products(spark=spark)
+revenue_contribution = get_revenue_contribution(spark=spark)
 
 top_ten_customer_df = top_ten_customer.toPandas()
 top_five_products_df = top_five_products_df.toPandas()
@@ -34,6 +36,7 @@ top_five_cities_df = top_five_cities_df.toPandas()
 most_purchased_products = most_purchased_products.toPandas()
 revenue_by_month = revenue_by_month.toPandas()
 less_purchased_products = less_purchased_products.toPandas()
+revenue_contribution = revenue_contribution.toPandas()
 
 # Calculate key metrics
 total_revenue, total_customers, total_transactions, avg_order_value = calculate_key_metrics(df)
@@ -139,6 +142,53 @@ app.layout = html.Div([
 
         dcc.Tab(label='SQL Queries', children=[
             html.Div([
+                html.Div([
+                html.H3('Revenue Contribution by Product Types', style={'color': '#2c3e50'}),
+                dcc.Graph(
+                    id='revenue-contribution-chart',
+                    figure={
+                        'data': [
+                            go.Sunburst(
+                                labels=revenue_contribution['main_category'],
+                                parents=[""] * len(revenue_contribution['main_category']),  # No hierarchy, flat structure
+                                values=revenue_contribution['revenue'],
+                                branchvalues='total',
+                                marker=dict(colors=revenue_contribution['revenue'], colorscale='Blues'),
+                            )
+                        ],
+                        'layout': {
+                            'title': 'Revenue Contribution by Product Types',
+                            'plot_bgcolor': '#f9f9f9',
+                            'paper_bgcolor': '#f9f9f9',
+                            'margin': dict(t=50, l=25, r=25, b=25)
+                        }
+                    }
+                )
+            ], style={'padding': '20px'}),
+                # Monthly Revenue Candlestick Chart
+                html.Div([
+                html.H3('Monthly Revenue Trends', style={'color': '#2c3e50'}),
+                dcc.Graph(
+                    id='revenue-by-month-chart',
+                    figure={
+                        'data': [
+                            go.Bar(
+                                x=revenue_by_month['month'],
+                                y=revenue_by_month['total_revenue'],
+                                name='Revenue',
+                                marker_color='#3498db'
+                            )
+                        ],
+                        'layout': {
+                            'title': 'Monthly Revenue Trends',
+                            'xaxis': {'title': 'Month'},
+                            'yaxis': {'title': 'Revenue'},
+                            'plot_bgcolor': '#f9f9f9',
+                            'paper_bgcolor': '#f9f9f9',
+                        }
+                    }
+                )
+            ], style={'padding': '20px'}),
                 # Top 10 Customers Table
                 html.H3('Top 100 Customers by Total Spent', style={'color': '#2c3e50'}),
                 dash.dash_table.DataTable(
@@ -148,7 +198,7 @@ app.layout = html.Div([
                         {"name": "Total Spent", "id": "total_spent"}
                     ],
                     data=top_ten_customer_df.to_dict('records'),
-                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},  # Scrollable table
+                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
                     style_cell={
                         'textAlign': 'left',
                         'padding': '5px',
@@ -160,8 +210,7 @@ app.layout = html.Div([
                         'backgroundColor': '#3498db',
                         'color': 'white',
                         'textAlign': 'center',
-                    },
-                    page_size=10
+                    }
                 )
             ], style={'padding': '20px'}),
 
@@ -175,7 +224,7 @@ app.layout = html.Div([
                         {"name": "Total Quantity", "id": "total_quantity"}
                     ],
                     data=most_purchased_products.to_dict('records'),
-                    style_table={'overflowX': 'auto'},
+                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
                     style_cell={
                         'textAlign': 'left',
                         'padding': '5px',
@@ -187,8 +236,7 @@ app.layout = html.Div([
                         'backgroundColor': '#2ecc71',
                         'color': 'white',
                         'textAlign': 'center',
-                    },
-                    page_size=10
+                    }
                 )
             ], style={'padding': '20px'}),
 
@@ -202,7 +250,7 @@ app.layout = html.Div([
                         {"name": "Total Quantity", "id": "total_quantity"}
                     ],
                     data=less_purchased_products.to_dict('records'),
-                    style_table={'overflowX': 'auto'},
+                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
                     style_cell={
                         'textAlign': 'left',
                         'padding': '5px',
@@ -214,8 +262,7 @@ app.layout = html.Div([
                         'backgroundColor': '#e74c3c',
                         'color': 'white',
                         'textAlign': 'center',
-                    },
-                    page_size=10
+                    }
                 )
             ], style={'padding': '20px'}),
 
@@ -229,7 +276,7 @@ app.layout = html.Div([
                         {"name": "Total Revenue", "id": "total_revenue"}
                     ],
                     data=top_five_products_df.to_dict('records'),
-                    style_table={'overflowX': 'auto'},
+                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
                     style_cell={
                         'textAlign': 'left',
                         'padding': '5px',
@@ -241,35 +288,9 @@ app.layout = html.Div([
                         'backgroundColor': '#9b59b6',
                         'color': 'white',
                         'textAlign': 'center',
-                    },
-                    page_size=10
-                )
-            ], style={'padding': '20px'}),
-
-            # Monthly Revenue Candlestick Chart
-            html.Div([
-            html.H3('Monthly Revenue Trends', style={'color': '#2c3e50'}),
-            dcc.Graph(
-                id='revenue-by-month-chart',
-                figure={
-                    'data': [
-                        go.Bar(
-                            x=revenue_by_month['month'],
-                            y=revenue_by_month['total_revenue'],
-                            name='Revenue',
-                            marker_color='#3498db'
-                        )
-                    ],
-                    'layout': {
-                        'title': 'Monthly Revenue Trends',
-                        'xaxis': {'title': 'Month'},
-                        'yaxis': {'title': 'Revenue'},
-                        'plot_bgcolor': '#f9f9f9',
-                        'paper_bgcolor': '#f9f9f9',
                     }
-                }
-            )
-        ], style={'padding': '20px'})
+                )
+            ], style={'padding': '20px'})
         ])
     ], style={
         'fontFamily': 'Arial, sans-serif',

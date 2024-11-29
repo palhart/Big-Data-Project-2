@@ -37,7 +37,8 @@ def get_most_purchased_products(spark):
     SELECT product_name, SUM(quantity) AS total_quantity 
     FROM transactions 
     GROUP BY product_name 
-    ORDER BY total_quantity DESC;
+    ORDER BY total_quantity DESC
+    LIMIT 100
     """
     return spark.sql(query) 
 
@@ -46,7 +47,7 @@ def get_revenue_by_month(spark):
     SELECT DATE_FORMAT(timestamp, 'yyyy-MM') AS month, SUM(total_amount) AS total_revenue 
     FROM transactions 
     GROUP BY month 
-    ORDER BY month;
+    ORDER BY month
     """
     return spark.sql(query) 
 
@@ -55,6 +56,17 @@ def get_less_purchased_products(spark):
     SELECT product_name, SUM(quantity) AS total_quantity 
     FROM transactions 
     GROUP BY product_name 
-    ORDER BY total_quantity ASC;
+    ORDER BY total_quantity ASC
+    LIMIT 100
+    """
+    return spark.sql(query) 
+
+def get_revenue_contribution(spark):
+    query = """
+    SELECT SUBSTRING_INDEX(category, '>', 1) AS main_category,
+    SUM(total_amount) AS revenue
+    FROM transactions
+    GROUP BY main_category
+    ORDER BY revenue DESC;
     """
     return spark.sql(query) 
