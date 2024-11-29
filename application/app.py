@@ -137,9 +137,9 @@ app.layout = html.Div([
                     dcc.Graph(id='time-series')
                 ], style={'width': '100%', 'padding': '10px'})
             ]),
+        ]),
 
-                   ]),
-            # third Tab: Advanced Analytics
+        # Third Tab: Advanced Analytics
         dcc.Tab(label='SQL Queries', children=[
             html.Div([
                 html.Div([
@@ -164,162 +164,163 @@ app.layout = html.Div([
                         }
                     }
                 )
-            ], style={'padding': '20px'}),
-            # New section for the most purchased category by area
-            html.Div([
-                html.H3('Most Purchased Category by Area', style={'color': '#2c3e50'}),
-                
-                # Dropdown for area selection
-                html.Div([
-                    html.Label('Select Area', style={'fontWeight': 'bold'}),
-                    dcc.Dropdown(
-                        id='area-dropdown',
-                        options=[{'label': city, 'value': city} for city in df['city'].unique()],
-                        value=df['city'].unique()[0],  # Default value
-                        style={'width': '100%'}
-                    )
-                ], style={'padding': '10px', 'width': '45%', 'display': 'inline-block'}),
-                
-                # Display most purchased category for the selected area
-                html.Div([
-                    html.H4('Most Purchased Category:', id='category-output'),
-                    html.H5('Total Spent: $', id='total-spent-output'),
                 ], style={'padding': '20px'}),
-            ], style={'padding': '20px'}),
-
+                # New section for the most purchased category by area
+                html.Div([
+                    html.H3('Most Purchased Category by Area', style={'color': '#2c3e50'}),
+                    
+                    # Dropdown for area selection
+                    html.Div([
+                        html.Label('Select Area', style={'fontWeight': 'bold'}),
+                        dcc.Dropdown(
+                            id='area-dropdown',
+                            options=[{'label': city, 'value': city} for city in df['city'].unique()],
+                            value=df['city'].unique()[0],  # Default value
+                            style={'width': '100%'}
+                        )
+                    ], style={'padding': '10px', 'width': '45%', 'display': 'inline-block'}),
+                    
+                    # Display most purchased category for the selected area
+                    html.Div([
+                        html.H4('Most Purchased Category:', id='category-output'),
+                        html.H5('Total Spent: $', id='total-spent-output'),
+                    ], style={'padding': '20px'}),
+                ], style={'padding': '20px'}),
                 # Monthly Revenue Candlestick Chart
                 html.Div([
-                html.H3('Monthly Revenue Trends', style={'color': '#2c3e50'}),
-                dcc.Graph(
-                    id='revenue-by-month-chart',
-                    figure={
-                        'data': [
-                            go.Bar(
-                                x=revenue_by_month['month'],
-                                y=revenue_by_month['total_revenue'],
-                                name='Revenue',
-                                marker_color='#3498db'
-                            )
-                        ],
-                        'layout': {
-                            'title': 'Monthly Revenue Trends',
-                            'xaxis': {'title': 'Month'},
-                            'yaxis': {'title': 'Revenue'},
-                            'plot_bgcolor': '#f9f9f9',
-                            'paper_bgcolor': '#f9f9f9',
+                    html.H3('Monthly Revenue Trends', style={'color': '#2c3e50'}),
+                    dcc.Graph(
+                        id='revenue-by-month-chart',
+                        figure={
+                            'data': [
+                                go.Bar(
+                                    x=revenue_by_month['month'],
+                                    y=revenue_by_month['total_revenue'],
+                                    name='Revenue',
+                                    marker_color='#3498db'
+                                )
+                            ],
+                            'layout': {
+                                'title': 'Monthly Revenue Trends',
+                                'xaxis': {'title': 'Month'},
+                                'yaxis': {'title': 'Revenue'},
+                                'plot_bgcolor': '#f9f9f9',
+                                'paper_bgcolor': '#f9f9f9',
+                            }
                         }
-                    }
-                )
-            ], style={'padding': '20px'}),
-                # Top 10 Customers Table
-                html.H3('Top 100 Customers by Total Spent', style={'color': '#2c3e50'}),
-                dash.dash_table.DataTable(
-                    id='sql-queries-table',
-                    columns=[
-                        {"name": "Customer Name", "id": "customer_name"},
-                        {"name": "Total Spent", "id": "total_spent"}
-                    ],
-                    data=top_ten_customer_df.to_dict('records'),
-                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
-                    style_cell={
-                        'textAlign': 'left',
-                        'padding': '5px',
-                        'backgroundColor': '#f0f2f5',
-                        'border': '1px solid #ddd',
-                    },
-                    style_header={
-                        'fontWeight': 'bold',
-                        'backgroundColor': '#3498db',
-                        'color': 'white',
-                        'textAlign': 'center',
-                    }
-                )
-            ], style={'padding': '20px'}),
+                    )
+                ], style={'padding': '20px'}),
+                # Top 100 Customers Table
+                html.Div([
+                    html.H3('Top 100 Customers by Total Spent', style={'color': '#2c3e50'}),
+                    dash.dash_table.DataTable(
+                        id='sql-queries-table',
+                        columns=[
+                            {"name": "Customer Name", "id": "customer_name"},
+                            {"name": "Total Spent", "id": "total_spent"}
+                        ],
+                        data=top_ten_customer_df.to_dict('records'),
+                        style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
+                        style_cell={
+                            'textAlign': 'left',
+                            'padding': '5px',
+                            'backgroundColor': '#f0f2f5',
+                            'border': '1px solid #ddd',
+                        },
+                        style_header={
+                            'fontWeight': 'bold',
+                            'backgroundColor': '#3498db',
+                            'color': 'white',
+                            'textAlign': 'center',
+                        }
+                    )
+                ], style={'padding': '20px'}),
 
-            # Most Purchased Products Table
-            html.Div([
-                html.H3('Most Purchased Products', style={'color': '#2c3e50'}),
-                dash.dash_table.DataTable(
-                    id='most-purchased-products-table',
-                    columns=[
-                        {"name": "Product Name", "id": "product_name"},
-                        {"name": "Total Quantity", "id": "total_quantity"}
-                    ],
-                    data=most_purchased_products.to_dict('records'),
-                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
-                    style_cell={
-                        'textAlign': 'left',
-                        'padding': '5px',
-                        'backgroundColor': '#f0f2f5',
-                        'border': '1px solid #ddd',
-                    },
-                    style_header={
-                        'fontWeight': 'bold',
-                        'backgroundColor': '#2ecc71',
-                        'color': 'white',
-                        'textAlign': 'center',
-                    }
-                )
-            ], style={'padding': '20px'}),
+                # Most Purchased Products Table
+                html.Div([
+                    html.H3('Most Purchased Products', style={'color': '#2c3e50'}),
+                    dash.dash_table.DataTable(
+                        id='most-purchased-products-table',
+                        columns=[
+                            {"name": "Product Name", "id": "product_name"},
+                            {"name": "Total Quantity", "id": "total_quantity"}
+                        ],
+                        data=most_purchased_products.to_dict('records'),
+                        style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
+                        style_cell={
+                            'textAlign': 'left',
+                            'padding': '5px',
+                            'backgroundColor': '#f0f2f5',
+                            'border': '1px solid #ddd',
+                        },
+                        style_header={
+                            'fontWeight': 'bold',
+                            'backgroundColor': '#2ecc71',
+                            'color': 'white',
+                            'textAlign': 'center',
+                        }
+                    )
+                ], style={'padding': '20px'}),
 
-            # Less Purchased Products Table
-            html.Div([
-                html.H3('Less Purchased Products', style={'color': '#2c3e50'}),
-                dash.dash_table.DataTable(
-                    id='less-purchased-products-table',
-                    columns=[
-                        {"name": "Product Name", "id": "product_name"},
-                        {"name": "Total Quantity", "id": "total_quantity"}
-                    ],
-                    data=less_purchased_products.to_dict('records'),
-                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
-                    style_cell={
-                        'textAlign': 'left',
-                        'padding': '5px',
-                        'backgroundColor': '#f0f2f5',
-                        'border': '1px solid #ddd',
-                    },
-                    style_header={
-                        'fontWeight': 'bold',
-                        'backgroundColor': '#e74c3c',
-                        'color': 'white',
-                        'textAlign': 'center',
-                    }
-                )
-            ], style={'padding': '20px'}),
+                # Less Purchased Products Table
+                html.Div([
+                    html.H3('Less Purchased Products', style={'color': '#2c3e50'}),
+                    dash.dash_table.DataTable(
+                        id='less-purchased-products-table',
+                        columns=[
+                            {"name": "Product Name", "id": "product_name"},
+                            {"name": "Total Quantity", "id": "total_quantity"}
+                        ],
+                        data=less_purchased_products.to_dict('records'),
+                        style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
+                        style_cell={
+                            'textAlign': 'left',
+                            'padding': '5px',
+                            'backgroundColor': '#f0f2f5',
+                            'border': '1px solid #ddd',
+                        },
+                        style_header={
+                            'fontWeight': 'bold',
+                            'backgroundColor': '#e74c3c',
+                            'color': 'white',
+                            'textAlign': 'center',
+                        }
+                    )
+                ], style={'padding': '20px'}),
 
-            # Top 5 Products by Revenue Table
-            html.Div([
-                html.H3('Top 5 Products by Revenue', style={'color': '#2c3e50'}),
-                dash.dash_table.DataTable(
-                    id='top-five-products-table',
-                    columns=[
-                        {"name": "Product Name", "id": "product_name"},
-                        {"name": "Total Revenue", "id": "total_revenue"}
-                    ],
-                    data=top_five_products_df.to_dict('records'),
-                    style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
-                    style_cell={
-                        'textAlign': 'left',
-                        'padding': '5px',
-                        'backgroundColor': '#f0f2f5',
-                        'border': '1px solid #ddd',
-                    },
-                    style_header={
-                        'fontWeight': 'bold',
-                        'backgroundColor': '#9b59b6',
-                        'color': 'white',
-                        'textAlign': 'center',
-                    }
-                )
-            ], style={'padding': '20px'})
-        ])
-    ], style={
-        'fontFamily': 'Arial, sans-serif',
-        'backgroundColor': '#f0f2f5'
-    })
-], style={'backgroundColor': '#f0f2f5', 'padding': '20px'})
+                # Top 5 Products by Revenue Table
+                html.Div([
+                    html.H3('Top 5 Products by Revenue', style={'color': '#2c3e50'}),
+                    dash.dash_table.DataTable(
+                        id='top-five-products-table',
+                        columns=[
+                            {"name": "Product Name", "id": "product_name"},
+                            {"name": "Total Revenue", "id": "total_revenue"}
+                        ],
+                        data=top_five_products_df.to_dict('records'),
+                        style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
+                        style_cell={
+                            'textAlign': 'left',
+                            'padding': '5px',
+                            'backgroundColor': '#f0f2f5',
+                            'border': '1px solid #ddd',
+                        },
+                        style_header={
+                            'fontWeight': 'bold',
+                            'backgroundColor': '#9b59b6',
+                            'color': 'white',
+                            'textAlign': 'center',
+                        }
+                    )
+                ], style={'padding': '20px'})
+            ])
 
+        ], style={
+            'fontFamily': 'Arial, sans-serif',
+            'backgroundColor': '#f0f2f5'
+        })
+    ], style={'backgroundColor': '#f0f2f5', 'padding': '20px'})
+])
 # Callbacks for Overview Tab Charts
 @app.callback(
     [Output('customer-type-pie', 'figure'),
