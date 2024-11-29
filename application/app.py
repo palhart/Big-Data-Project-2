@@ -5,17 +5,24 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
+import dash.dash_table
 import plotly.express as px
 import plotly.graph_objs as go
 
 from Analytics.analytics import prepare_data, calculate_key_metrics
 from Analytics.load_data import load_data
+from sql_analytics.sql_queries import get_top_ten_customer
+from sql_analytics.load_data import load_data_sql
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
 # Load and prepare data
 df = load_data()
 df = prepare_data(df)
+
+data2, spark = load_data_sql()
+top_ten_customer = get_top_ten_customer(spark=spark)
+top_ten_customer_df = top_ten_customer.toPandas()
 
 # Calculate key metrics
 total_revenue, total_customers, total_transactions, avg_order_value = calculate_key_metrics(df)
@@ -116,6 +123,35 @@ app.layout = html.Div([
                     dcc.Graph(id='time-series')
                 ], style={'width': '100%', 'padding': '10px'})
             ]),
+
+                   ]),
+        # Third Tab: SQL Queries
+        dcc.Tab(label='SQL Queries', children=[
+            html.Div([
+                html.H3('Top 10 Customers by Total Spent', style={'color': '#2c3e50'}),
+                dash.dash_table.DataTable(
+                    id='sql-queries-table',
+                    columns=[
+                        {"name": "Customer ID", "id": "customer_id"},
+                        {"name": "Customer Name", "id": "customer_name"},
+                        {"name": "Total Spent", "id": "total_spent"}
+                    ],
+                    data=top_ten_customer_df.to_dict('records'),
+                    style_table={'overflowX': 'auto'},
+                    style_cell={
+                        'textAlign': 'left',
+                        'padding': '5px',
+                        'backgroundColor': '#f0f2f5',
+                        'border': '1px solid #ddd',
+                    },
+                    style_header={
+                        'fontWeight': 'bold',
+                        'backgroundColor': '#3498db',
+                        'color': 'white',
+                        'textAlign': 'center',
+                    }
+                )
+            ], style={'padding': '20px'})
         ])
     ], style={
         'fontFamily': 'Arial, sans-serif',
