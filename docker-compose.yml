@@ -32,17 +32,27 @@ services:
     ports:
       - "9864:9864"
     env_file:
-      - ./hadoop-config/config.env
-    networks:
-      - hadoop-net
-  
-  data-ingestion:
-    image: pyspark-hdfs-writer
-    depends_on:
-      - hdfs-namenode
-      - hdfs-datanode
-    networks:
-      - hadoop-net
-    volumes:
-      - /data/BigData/ecommerce_data_with_trends.csv:/data/BigData/ecommerce_data_with_trends.csv
+      - ./hadoop-config/config
 
+  # Data Processing with Spark
+  data-processing:
+    build:
+      context: ./data_processing
+      dockerfile: Dockerfile
+    container_name: "data-processing"
+    depends_on:
+      hdfs-namenode:
+        condition: service_started
+    environment:
+      - SPARK_MASTER=local[*]
+      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+    command: ["spark-submit", "--master", "local[*]", "/app/data_pipeline.py"]
+    volumes:
+      - ./data_processing:/app/data_processing/
+      - ./hadoop-config:/opt/hadoop/etc/hadoop
+    networks:
+      - hadoop_network
+
+networks:
+  hadoop_network:
+    driver: bridge
