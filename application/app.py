@@ -12,7 +12,7 @@ import plotly.graph_objs as go
 from Analytics.analytics import prepare_data, calculate_key_metrics
 from Analytics.load_data import load_data
 from sql_analytics.sql_queries import *
-from sql_analytics.load_data import load_data_sql
+from sql_analytics.load_data import load_data_sql, get_sql_analytics
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
@@ -22,21 +22,7 @@ df = prepare_data(df)
 
 data2, spark = load_data_sql()
 
-top_ten_customer = get_top_ten_customer(spark=spark)
-top_five_products_df = get_top_five_products(spark=spark)
-top_five_cities_df = get_top_five_cities(spark=spark)
-most_purchased_products = get_most_purchased_products(spark=spark)
-revenue_by_month = get_revenue_by_month(spark=spark)
-less_purchased_products = get_less_purchased_products(spark=spark)
-revenue_contribution = get_revenue_contribution(spark=spark)
-
-top_ten_customer_df = top_ten_customer.toPandas()
-top_five_products_df = top_five_products_df.toPandas()
-top_five_cities_df = top_five_cities_df.toPandas()
-most_purchased_products = most_purchased_products.toPandas()
-revenue_by_month = revenue_by_month.toPandas()
-less_purchased_products = less_purchased_products.toPandas()
-revenue_contribution = revenue_contribution.toPandas()
+top_ten_customer, top_five_products, top_five_cities, most_purchased_products, revenue_by_month, less_purchased_products, revenue_contribution = get_sql_analytics(spark)
 
 # Calculate key metrics
 total_revenue, total_customers, total_transactions, avg_order_value = calculate_key_metrics(df)
@@ -219,7 +205,7 @@ app.layout = html.Div([
                             {"name": "Customer Name", "id": "customer_name"},
                             {"name": "Total Spent", "id": "total_spent"}
                         ],
-                        data=top_ten_customer_df.to_dict('records'),
+                        data=top_ten_customer.to_dict('records'),
                         style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
                         style_cell={
                             'textAlign': 'left',
@@ -297,7 +283,7 @@ app.layout = html.Div([
                             {"name": "Product Name", "id": "product_name"},
                             {"name": "Total Revenue", "id": "total_revenue"}
                         ],
-                        data=top_five_products_df.to_dict('records'),
+                        data=top_five_products.to_dict('records'),
                         style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
                         style_cell={
                             'textAlign': 'left',
