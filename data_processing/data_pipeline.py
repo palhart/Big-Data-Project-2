@@ -49,7 +49,8 @@ def main():
 
     final_df = run_data_pipeline(spark_df)
 
-    save_to_hdfs(final_df, hdfs_input_path)
+    hdfs_output_path = "/user/spark/processed/data.csv"
+    save_to_hdfs(final_df, default_fs + hdfs_output_path)
 
     print("\nSample of final processed data:")
     final_df.show(5)

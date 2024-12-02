@@ -8,10 +8,11 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objs as go
 
-from Analytics.analytics import prepare_data, calculate_key_metrics
-from Analytics.load_data import load_data
+from analytics.analytics import prepare_data, calculate_key_metrics
+from analytics.load_data import load_data
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
+server = app.server
 
 # Load and prepare data
 df = load_data()
@@ -217,4 +218,4 @@ app.index_string = '''
 '''
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8050)

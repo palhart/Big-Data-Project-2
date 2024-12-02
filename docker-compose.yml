@@ -41,8 +41,6 @@ services:
     depends_on:
       hdfs-namenode:
         condition: service_healthy
-      # hdfs-datanode:
-      #   condition: service_healthy
     networks:
       - hadoop_network
     volumes:
@@ -54,11 +52,20 @@ services:
     depends_on:
       data-ingestion:
         condition: service_completed_successfully
-
-    # volumes:
-    #   - ./data_processing:/app/data_processing/
     networks:
       - hadoop_network
+
+  dashboard:
+    image: dashboard
+    depends_on:
+      data-processing:
+        condition: service_completed_successfully
+    ports:
+      - "8050:8050"
+    networks:
+      - hadoop_network
+    
+    
 
 networks:
   hadoop_network:
