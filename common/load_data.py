@@ -13,14 +13,14 @@ def load_data():
         .config("spark.sql.warehouse.dir", os.path.abspath('spark-warehouse')) \
         .config("spark.hadoop.fs.defaultFS", "file:///") \
         .getOrCreate()
-
     local_file_path = "/data/BigData/ecommerce_data_with_trends.csv"
+
     spark_df = spark.read \
             .option("header", "true") \
             .option("inferSchema", "true") \
             .csv(local_file_path)
-        
+    spark_df.createOrReplaceTempView("transactions")
+    
     df = spark_df.toPandas()
-    # Clean up
-    spark.stop()
-    return df
+
+    return df, spark

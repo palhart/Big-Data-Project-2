@@ -9,18 +9,16 @@ import dash.dash_table
 import plotly.express as px
 import plotly.graph_objs as go
 
-from Analytics.analytics import prepare_data, calculate_key_metrics
-from Analytics.load_data import load_data
+from analytics.analytics import prepare_data, calculate_key_metrics
 from sql_analytics.sql_queries import *
-from sql_analytics.load_data import load_data_sql, get_sql_analytics
+from sql_analytics.analytics import get_sql_analytics
+from common.load_data import load_data
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
 # Load and prepare data
-df = load_data()
+df, spark = load_data()
 df = prepare_data(df)
-
-data2, spark = load_data_sql()
 
 top_ten_customer, top_five_products, top_five_cities, most_purchased_products, revenue_by_month, less_purchased_products, revenue_contribution = get_sql_analytics(spark)
 
@@ -79,14 +77,14 @@ app.layout = html.Div([
             # First Row of Charts
             html.Div([
                 html.Div([
-                    html.H3('Sales Distribution by Customer Type', style={'color': '#2c3e50'}),
+                    html.H3('Sales Distribution by Customer Type', style={'color': '#2c3e50', 'textAlign': 'center'}),
                     dcc.Graph(id='customer-type-pie')
-                ], style={'width': '40%', 'display': 'inline-block', 'padding': '10px'}),
+                ], style={'width': '30%', 'display': 'inline-block', 'padding': '10px', 'backgroundColor': '#f0f2f5'}),
                 
                 html.Div([
-                    html.H3('Sales by Category', style={'color': '#2c3e50'}),
+                    html.H3('Sales by Category', style={'color': '#2c3e50', 'textAlign': 'center'}),
                     dcc.Graph(id='category-bar')
-                ], style={'width': '60%', 'display': 'inline-block', 'padding': '10px'})
+                ], style={'width': '70%', 'display': 'inline-block', 'padding': '10px'})
             ], style={'display': 'flex', 'justifyContent': 'space-between'})
         ]),
         
@@ -347,10 +345,7 @@ app.layout = html.Div([
                 ], style={'padding': '20px'})
             ])
 
-        ], style={
-            'fontFamily': 'Arial, sans-serif',
-            'backgroundColor': '#f0f2f5'
-        })
+        ])
     ], style={'backgroundColor': '#f0f2f5', 'padding': '20px'})
 ])
 

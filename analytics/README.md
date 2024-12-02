@@ -20,10 +20,14 @@ uv add dash pandas plotly pyspark
 ```
 
 ---
-## Content
 
-- **`load_data.py`**  
-  Loads the CSV data using Apache Spark.
+## Content
 
 - **`analytics.py`**  
   Provides functions to prepare data, calculate metrics, and analyze purchasing behaviors.
+
+---
+
+### How to view
+
+Check out the README in the `common/` folder to run `app.py` and view the dashboard.
