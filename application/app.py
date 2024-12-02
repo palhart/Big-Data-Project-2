@@ -27,6 +27,10 @@ top_ten_customer, top_five_products, top_five_cities, most_purchased_products, r
 # Calculate key metrics
 total_revenue, total_customers, total_transactions, avg_order_value = calculate_key_metrics(df)
 
+# Unique cities with total sales > 0
+city_sales = df.groupby('city')['total_amount'].sum()
+unique_cities_with_sales = city_sales[city_sales > 0].index
+
 # App layout
 app.layout = html.Div([
     html.Div([
@@ -125,7 +129,49 @@ app.layout = html.Div([
             ]),
         ]),
 
-        # Third Tab: Advanced Analytics
+        # Third Tab: Demographics Analytics
+        dcc.Tab(label='Demographics Analytics', children=[
+            # Filters
+            html.Div([
+                html.Div([
+                    html.Label('Customer Type', style={'fontWeight': 'bold'}),
+                    dcc.Dropdown(
+                        id='demographics-customer-type-filter',
+                        options=[{'label': ct, 'value': ct} for ct in df['customer_type'].unique()],
+                        value=df['customer_type'].unique()[0],
+                        style={'width': '100%'}
+                    )
+                ], style={'width': '45%', 'display': 'inline-block', 'padding': '10px'}),
+                
+                html.Div([
+                    html.Label('City', style={'fontWeight': 'bold'}),
+                    dcc.Dropdown(
+                        id='city-filter',
+                        options=[{'label': city, 'value': city} for city in unique_cities_with_sales],
+                        multi=True,
+                        placeholder='Select Cities',
+                        style={'width': '100%'}
+                    )
+                ], style={'width': '45%', 'display': 'inline-block', 'padding': '10px'})
+            ], style={'textAlign': 'center', 'margin': '20px'}),
+            
+            # Demographics Charts
+            html.Div([
+                # Cities Performance
+                html.Div([
+                    html.H3('City Performance', style={'color': '#2c3e50'}),
+                    dcc.Graph(id='cities-distribution')
+                ], style={'width': '50%', 'display': 'inline-block', 'padding': '10px'}),
+                
+                # Customer Lifetime Value
+                html.Div([
+                    html.H3('Customer Lifetime Value', style={'color': '#2c3e50'}),
+                    dcc.Graph(id='top-customers')
+                ], style={'width': '50%', 'display': 'inline-block', 'padding': '10px'})
+            ], style={'display': 'flex', 'justifyContent': 'space-between'})
+        ]),
+
+        # Fourth Tab: Advanced Analytics
         dcc.Tab(label='SQL Queries', children=[
             html.Div([
                 html.Div([
@@ -307,6 +353,7 @@ app.layout = html.Div([
         })
     ], style={'backgroundColor': '#f0f2f5', 'padding': '20px'})
 ])
+
 # Callbacks for Overview Tab Charts
 @app.callback(
     [Output('customer-type-pie', 'figure'),
@@ -332,6 +379,10 @@ def update_overview_charts(customer_type):
         x='category',
         y='total_amount',
         color='category',
+        labels={
+            'total_amount': 'Total Sales ($)',
+            'category': 'Product Category'
+        },
         color_discrete_sequence=px.colors.qualitative.Set3
     )
     category_fig.update_layout(
@@ -359,6 +410,10 @@ def update_advanced_charts(customer_type, time_period):
         x=time_col,
         y='total_amount',
         title=f'{customer_type}\'s average Sales by {time_period.title()}',
+        labels={
+            'total_amount': 'Average Sales ($)',
+            time_col: time_period.title()
+        },
         color_discrete_sequence=['#3498db']
     )
     time_series_fig.update_layout(
@@ -368,6 +423,91 @@ def update_advanced_charts(customer_type, time_period):
     
     return time_series_fig
 
+# Callbacks for Demographics Tab Charts
+@app.callback(
+    [Output('cities-distribution', 'figure'),
+     Output('top-customers', 'figure')],
+    [Input('demographics-customer-type-filter', 'value'),
+     Input('city-filter', 'value')]
+)
+def update_demographics_charts(customer_type, selected_cities):
+    # Filter data based on customer type and selected cities
+    filtered_df = df[df['customer_type'] == customer_type]
+    
+    if selected_cities:
+        filtered_df = filtered_df[filtered_df['city'].isin(selected_cities)]
+    
+    # City Performance Scatter plot
+    city_performance = filtered_df.groupby('city').agg({
+        'total_amount': 'sum',
+        'customer_id': 'count',  # Number of unique customers
+        'quantity': 'sum'  # Total items sold
+    }).reset_index()
+    
+    cities_distribution = px.scatter(
+        city_performance, 
+        x='customer_id',
+        y='total_amount',  # Total sales
+        size='quantity',  # Size represents total items sold
+        color='city',
+        hover_name='city',
+        title=f'City Performance for {customer_type}',
+        labels={
+            'customer_id': 'Number of Customers', 
+            'total_amount': 'Total Sales ($)',
+            'quantity': 'Total Items Sold',
+            'city': 'City'
+        },
+        color_discrete_sequence=px.colors.qualitative.Set3
+    )
+    cities_distribution.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
+    )
+    
+    # Customer Lifetime Value Scatter Plot
+    customer_metrics = filtered_df.groupby('customer_name').agg({
+        'total_amount': 'sum',
+        'quantity': 'sum',
+        'transaction_id': 'count'
+    }).reset_index()
+    
+    customer_metrics['avg_transaction_value'] = customer_metrics['total_amount'] / customer_metrics['transaction_id']
+    
+    top_customers = px.scatter(
+        customer_metrics.nlargest(20, 'total_amount'),
+        x='transaction_id',
+        y='total_amount',  # Total purchase amount
+        size='quantity',  # Size represents total items purchased
+        color='customer_name',
+        hover_name='customer_name',
+        title=f'Customer Lifetime Value for {customer_type}',
+        labels={
+            'transaction_id': 'Number of Transactions', 
+            'total_amount': 'Total Purchase Amount ($)',
+            'quantity': 'Total Items Purchased',
+            'avg_transaction_value': 'Avg Transaction Value ($)',
+            'customer_name': 'Customer Name'
+        },
+        color_discrete_sequence=px.colors.qualitative.Pastel
+    )
+    
+    # Add additional hover information
+    top_customers.update_traces(
+        hovertemplate='<b>%{hovertext}</b><br>' +
+                      'Total Purchase: $%{y:.2f}<br>' +
+                      'Transactions: %{x}<br>' +
+                      'Total Items: %{marker.size}<extra></extra>'
+    )
+    
+    top_customers.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
+    )
+    
+    return cities_distribution, top_customers
+
+# Callbacks for SQL Queries Tab
 @app.callback(
     [Output('category-output', 'children'),
      Output('total-spent-output', 'children')],
