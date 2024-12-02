@@ -5,7 +5,7 @@ FROM bitnami/spark:latest
 WORKDIR /app
 
 # Install Python dependencies
-COPY docker/ingestion/requirement.txt /app/requirements.txt
+COPY docker/ingestion/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the main script into the container
