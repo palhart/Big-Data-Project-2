@@ -1,52 +1,111 @@
-# Big-Data-Project-2
-Customer Data Analysis with Spark
+# PySpark Data Processing and Visualization Dashboard
+
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![PySpark](https://img.shields.io/badge/PySpark-E25A1C?style=for-the-badge&logo=apache-spark&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+
+## 📌 Project Overview
+
+This repository provides a robust data processing and visualization solution using PySpark, Docker, and a web dashboard. The application offers a complete pipeline for data ingestion, transformation, and interactive visualization.
+
+## 🚀 Features
+
+- **Dockerized Microservices Architecture**
+- **PySpark-powered Data Processing**
+- **Scalable Data Ingestion**
+- **Interactive Web Dashboard**
+- **Containerized Deployment**
 
 
-## Setting up your Python env using uv...
-
-See instructions for setting up uv here: 
-
-https://docs.astral.sh/uv/getting-started/installation/
-
-Or if you're on Linux / macOS, simply run
-
-```
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-And add `~/.cargo/bin` to your `$PATH`.
-
-Then `cd` in the root of this repo and run
-
-```
-uv sync
-```
-
-This will create an env in `.venv`, which you can activate with
+## 📦 Project Structure
 
 ```
-source .venv/bin/activate
+.
+├── Makefile
+├── README.md
+├── analytics
+│   ├── README.md
+│   ├── analytics.py
+│   └── load_data.py
+├── application
+│   ├── README.md
+│   └── app.py
+├── data_ingestion
+│   └── data_ingestion.py
+├── data_processing
+│   ├── README.md
+│   ├── data_cleaning.py
+│   ├── data_pipeline.py
+│   └── data_processing.py
+├── docker
+│   ├── dashboard
+│   │   └── Dockerfile
+│   ├── data_processing
+│   │   ├── Dockerfile
+│   │   └── requirements.txt
+│   └── ingestion
+│       ├── Dockerfile
+│       └── requirements.txt
+├── docker-compose.yml
+├── hadoop-config
+│   └── config.env
+└── sql-analytics
+    ├── README.md
+    ├── load_data.py
+    ├── sql_analytics.py
+    └── sql_queries.py
+
 ```
 
-## Data Ingestion 
+## 🔧 Installation and Setup
 
-Make sure the file  is available in the `/data/BigData/your_file.csv` directory on the host machine, as this will be the input for ingestion.
+### 1. Build Services
 
-### Start the HDFS cluster
+```bash
+# Using Make (recommended)
+make build
 
-Run the command the start the HDFS cluster 
-
+# Alternative Docker Compose command
+docker-compose build
 ```
+
+### 3. Run the Application
+
+```bash
+# Using Make
+make run
+
+# Alternative Docker Compose command
 docker-compose up -d
 ```
-You can access the Hadoop web UI via the browser:
 
-NameNode Web UI: http://localhost:9870
-DataNode Web UI: http://localhost:9864
+### 4. Access the Dashboard
 
-### Start the script 
+Open your web browser and navigate to:
+- Dashboard URL: `http://localhost:8050`
 
-```
-python data_ingestion/data_ingestion.py
-```
+## 📋 Makefile Commands
 
+| Command | Description |
+|---------|-------------|
+| `make build` | Build all Docker images |
+| `make run` | Start all services |
+| `make stop` | Stop all running services |
+| `make rm` | Remove containers and images |
+
+## 🔬 Services
+
+### 1. Ingestion Service
+- Processes raw data
+- Writes data to distributed storage
+- Uses PySpark for efficient data handling
+
+### 2. Data Processing Service
+- Performs advanced data transformations
+- Applies business logic and data cleaning
+- Prepares data for visualization
+
+### 3. Dashboard Service
+- Web-based interactive dashboard
+- Real-time data visualization
+- Responsive design
