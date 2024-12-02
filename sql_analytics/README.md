@@ -7,10 +7,9 @@ This feature provides an in-depth analysis of the dataset using PySpark SQL.
 
 ### File Structure
 
-- **`sql_analytics/sql_queries.py`**: Contains all the SQL queries used for analysis.
+- **`sql_queries.py`**: Contains all the SQL queries used for analysis.
 
-- **`sql_analytics/load_data.py`**: Contains the function designed to load the data from hdfs.
-
+- **`analytics.py`**: Contains the function to create the Dataframes from SQL Queries
 
 ### Purpose
 
@@ -22,4 +21,4 @@ This analysis helps identify key insights and trends in the data, such as:
 
 ### How to view
 
-You can run app.py in the application folder. The third tab uses our queries to do the analytics. Check out the README in application/
+The fourth tab uses our queries to do the analytics. Check out the README in `common/` folder to run `app.py` and view the dashboard.
