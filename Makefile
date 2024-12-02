@@ -3,7 +3,7 @@ build:
 	docker build -f docker/data_processing/Dockerfile -t pyspark-data-processing .
 	docker build -f docker/dashboard/Dockerfile -t dashboard .
 run: 
-	docker compose up -d
+	docker compose up
 
 stop:
 	docker compose down
