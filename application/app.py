@@ -327,7 +327,7 @@ app.layout = html.Div([
                         id='top-five-products-table',
                         columns=[
                             {"name": "Product Name", "id": "product_name"},
-                            {"name": "Total Revenue", "id": "total_revenue"}
+                            {"name": "Total Revenue", "id": "total_quantity"}
                         ],
                         data=top_five_products.to_dict('records'),
                         style_table={'overflowX': 'auto', 'maxHeight': '300px', 'overflowY': 'scroll'},
