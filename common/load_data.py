@@ -1,9 +1,8 @@
 import os
 from pyspark.sql import SparkSession
 
-from load_data import load_data
-from sql_queries import *
-spark = SparkSession.builder \
+def load_data():
+    spark = SparkSession.builder \
         .appName("E-commerce Analytics") \
         .config("spark.driver.host", "localhost") \
         .config("spark.driver.bindAddress", "127.0.0.1") \
@@ -14,15 +13,14 @@ spark = SparkSession.builder \
         .config("spark.sql.warehouse.dir", os.path.abspath('spark-warehouse')) \
         .config("spark.hadoop.fs.defaultFS", "file:///") \
         .getOrCreate()
+    local_file_path = "/data/BigData/ecommerce_data_with_trends.csv"
 
-data = load_data(spark=spark)
+    spark_df = spark.read \
+            .option("header", "true") \
+            .option("inferSchema", "true") \
+            .csv(local_file_path)
+    spark_df.createOrReplaceTempView("transactions")
+    
+    df = spark_df.toPandas()
 
-# Register the DataFrame as a temporary view
-data.createOrReplaceTempView("transactions")
-
-# Exemple of how to get the analysis with SQL
-top_ten_customer_df = get_top_ten_customer(spark=spark)
-
-top_five_products_df = get_top_five_products(spark=spark)
-
-top_five_cities_df = get_top_five_cities(spark=spark)
+    return df, spark

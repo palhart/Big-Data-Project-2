@@ -24,6 +24,8 @@ uv add dash pandas plotly pyspark
 - **`app.py`**  
   Contains the Dash application to visualize the analysis results.
 
+- **`load_data.py`**: Contains the function designed to load the data from hdfs.
+
 ---
 
 ## Quick Instructions
