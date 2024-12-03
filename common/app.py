@@ -555,5 +555,7 @@ app.index_string = '''
 </html>
 '''
 
+spark.stop()
+
 if __name__ == '__main__':
     app.run_server(debug=True)
