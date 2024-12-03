@@ -78,8 +78,13 @@ make run
 # Alternative Docker Compose command
 docker-compose up -d
 ```
+### 4. Acces HDFS database 
 
-### 4. Access the Dashboard
+Open yout web browser and navigate to: 
+- HDFS URL: `http://localhost:9870/`
+
+
+### 5. Access the Dashboard
 
 Open your web browser and navigate to:
 - Dashboard URL: `http://localhost:8050`

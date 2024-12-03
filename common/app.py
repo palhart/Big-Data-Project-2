@@ -16,6 +16,8 @@ from common.load_data import load_data
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
+server = app.server
+
 # Load and prepare data
 df, spark = load_data()
 df = prepare_data(df)
