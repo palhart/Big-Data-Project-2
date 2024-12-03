@@ -22,7 +22,8 @@ WORKDIR /app
 
 # Copy the main script into the container
 COPY analytics/ /app/analytics/
-COPY application/ /app/application/
+COPY common/ /app/common/
+COPY sql_analytics/ /app/sql_analytics/
 
 
-CMD [ "gunicorn", "--timeout=300", "--workers=1", "--threads=1", "-b 0.0.0.0:8050", "application.app:server"]
+CMD [ "gunicorn", "--timeout=300", "--workers=1", "--threads=1", "-b 0.0.0.0:8050", "common.app:server"]
