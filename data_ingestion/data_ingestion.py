@@ -1,16 +1,25 @@
-from hdfs import InsecureClient
-import pandas as pd
+from pyspark.sql import SparkSession
+import logging
 
-# Connect to the NameNode's WebHDFS interface
-hdfs_client = InsecureClient('http://localhost:9870', user='root')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-
-def upload_file_to_hdfs(local_file_path, hdfs_file_path):
-    try:
-        hdfs_client.upload(hdfs_file_path, local_file_path, overwrite=True)
-        print(f"Successfully uploaded {local_file_path} to {hdfs_file_path}")
-    except Exception as e:
-        print(f"Failed to upload {local_file_path} to {hdfs_file_path}: {e}")
+def write_to_hdfs(local_path, spark):
+    df = spark.read.csv("file:///"  + local_path, header=True)
+    df.write.csv("raw/data.csv", header=True, mode="overwrite")
 
 
-upload_file_to_hdfs("/data/BigData/ecommerce_data_with_trends.csv", "/data/ecommerce_data_with_trends.csv")
+if __name__ == "__main__":
+    spark = SparkSession.builder.appName("Data Ingestion") \
+    .appName("WriteToHDFS") \
+    .config("spark.hadoop.fs.defaultFS", "hdfs://hdfs-namenode:8020") \
+    .getOrCreate()
+
+    logger.info("Spark session is successfully connected.")
+
+    write_to_hdfs("/data/BigData/ecommerce_data_with_trends.csv", spark)
+
+    logger.info("Data is successfully written to HDFS.")
+
+    spark.stop()
+    

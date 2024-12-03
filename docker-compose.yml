@@ -1,5 +1,5 @@
 services:
-  # distributed storage
+  # Distributed storage
   hdfs-namenode:
     container_name: "hdfs-namenode"
     image: "apache/hadoop:3"
@@ -7,11 +7,19 @@ services:
     command: ["hdfs", "namenode"]
     ports:
       - "8020:8020"
-      - "9870:9870"  # Web UI port
+      - "9870:9870"
     env_file:
-      - ./hadoop-config/config
+      - ./hadoop-config/config.env
     environment:
       ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+    networks:
+      - hadoop_network
+    healthcheck:
+      test: ["CMD", "hdfs", "dfsadmin", "-report"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   hdfs-datanode:
     depends_on:
@@ -19,9 +27,46 @@ services:
         condition: service_started
     container_name: "hdfs-datanode"
     image: "apache/hadoop:3"
-    hostname: "localhost"
+    hostname: "hdfs-datanode"
     command: ["hdfs", "datanode"]
     ports:
       - "9864:9864"
     env_file:
-      - ./hadoop-config/config
+      - ./hadoop-config/config.env
+    networks:
+      - hadoop_network
+
+  data-ingestion:
+    image: pyspark-hdfs-writer
+    depends_on:
+      hdfs-namenode:
+        condition: service_healthy
+    networks:
+      - hadoop_network
+    volumes:
+      - /data/BigData/ecommerce_data_with_trends.csv:/data/BigData/ecommerce_data_with_trends.csv
+
+  # Data Processing with Spark
+  data-processing:
+    image: pyspark-data-processing
+    depends_on:
+      data-ingestion:
+        condition: service_completed_successfully
+    networks:
+      - hadoop_network
+
+  dashboard:
+    image: dashboard
+    depends_on:
+      data-processing:
+        condition: service_completed_successfully
+    ports:
+      - "8050:8050"
+    networks:
+      - hadoop_network
+    
+    
+
+networks:
+  hadoop_network:
+    driver: bridge
