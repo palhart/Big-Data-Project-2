@@ -11,7 +11,7 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from pyspark.ml.classification import RandomForestClassifier
 
-class CustomerMLAnalysis:
+class CustomerChurnMLAnalysis:
     def __init__(self, spark, df):
         self.spark = spark
         
