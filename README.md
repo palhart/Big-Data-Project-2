@@ -141,6 +141,10 @@ Open your web browser and navigate to:
 - Not included inside the Docker container
 - More information: [Machine Learning](ml_module/README.md)
 
+### 5. Application photo and ML html
+- Screenshots of the application with all analysis
+- HTML of the notebook from the ml_module folder
+
 ## 📚 Resources
 
 - [PySpark Documentation](https://spark.apache.org/docs/latest/api/python/index.html)
