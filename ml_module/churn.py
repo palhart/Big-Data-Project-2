@@ -92,15 +92,6 @@ class CustomerChurnMLAnalysis:
         # Calculate customer metrics
         customer_metrics = self._calculate_customer_metrics()
 
-        intervals = customer_metrics.agg(
-        F.min("recency_days").alias("min_recency_days"),
-        F.max("recency_days").alias("max_recency_days"),
-        F.min("total_transactions").alias("min_total_transactions"),
-        F.max("total_transactions").alias("max_total_transactions"),
-        F.min("total_purchase_amount").alias("min_total_purchase_amount"),
-        F.max("total_purchase_amount").alias("max_total_purchase_amount")
-        ).collect()
-        
         # Churn based on multiple criteria
         churn_conditions = (
             (col("recency_days") > 60) |  # No purchase in last 3 months
