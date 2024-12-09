@@ -109,8 +109,22 @@ Open your web browser and navigate to:
 - Performs advanced data transformations
 - Applies business logic and data cleaning
 - Prepares data for visualization
+- More information : [Data Processing](data_processing/README.md)
 
 ### 3. Dashboard Service
+- In-depth analysis of the dataset using PySpark SQL
 - Web-based interactive dashboard
 - Real-time data visualization
 - Responsive design
+- More information: [Dashboard](analytics/README.md) and [Sql Analytics](sql_analytics/README.md)
+
+### 4. Machine Learning
+- Use Spark ML to make some ML on the dataset
+- Add churn forecasting and customer segmentation
+- More information: [Machine Learning](ml_module/README.md)
+
+## 📚 Resources
+
+- [PySpark Documentation](https://spark.apache.org/docs/latest/api/python/index.html)
+- [Docker Documentation](https://docs.docker.com/)
+- [Plotly Dash Documentation](https://dash.plotly.com/)
