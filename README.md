@@ -121,6 +121,7 @@ Open your web browser and navigate to:
 ### 4. Machine Learning
 - Use Spark ML to make some ML on the dataset
 - Add churn forecasting and customer segmentation
+- Not included inside the Docker container
 - More information: [Machine Learning](ml_module/README.md)
 
 ## 📚 Resources
