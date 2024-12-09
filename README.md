@@ -27,7 +27,19 @@ This repository provides a robust data processing and visualization solution usi
 │   ├── README.md
 │   ├── analytics.py
 │   └── load_data.py
-├── application
+├── application_photo_and_ML_html
+│   ├── App_image_1.png
+│   ├── App_image_10.png
+│   ├── App_image_2.png
+│   ├── App_image_3.png
+│   ├── App_image_4.png
+│   ├── App_image_5.png
+│   ├── App_image_6.png
+│   ├── App_image_7.png
+│   ├── App_image_8.png
+│   ├── App_image_9.png
+│   └── ml_analysis.html
+├── common
 │   ├── README.md
 │   └── app.py
 ├── data_ingestion
@@ -49,6 +61,11 @@ This repository provides a robust data processing and visualization solution usi
 ├── docker-compose.yml
 ├── hadoop-config
 │   └── config.env
+├── ml_module
+│   ├── README.md
+│   ├── churn.py
+│   ├── customer_segmentation.py
+│   └── ml_analysis.ipynb
 └── sql-analytics
     ├── README.md
     ├── load_data.py
