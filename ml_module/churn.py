@@ -94,8 +94,8 @@ class CustomerChurnMLAnalysis:
 
         # Churn based on multiple criteria
         churn_conditions = (
-            (col("recency_days") > 60) |  # No purchase in last 3 months
-            (col("total_transactions") < 50) |  # Low transaction frequency
+            (col("recency_days") > 60) |  # No purchase in last 2 months
+            (col("total_transactions") < 50) |
             (col("total_purchase_amount") < customer_metrics.approxQuantile("total_purchase_amount", [0.50], 0.01)[0])
         )
 
